@@ -1,19 +1,16 @@
 import 'package:flutter/cupertino.dart';
 
-class ChangeLanguageViewModel extends ChangeNotifier {
-  String _language = 'pt';
+class ChangeLanguageViewModel {
+  final ValueNotifier<String> _language = ValueNotifier<String>('pt');
   static final ChangeLanguageViewModel _instance = ChangeLanguageViewModel._();
 
   ChangeLanguageViewModel._();
 
-  String get language => _language;
+  ValueNotifier<String> get language => _language;
 
   void setLanguage(String language) {
-    _language = language;
-    notifyListeners();
+    _language.value = language;
   }
 
-  static ChangeLanguageViewModel get instance {
-    return _instance;
-  }
+  static ChangeLanguageViewModel get instance => _instance;
 }
