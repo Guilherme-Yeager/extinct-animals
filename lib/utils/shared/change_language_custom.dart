@@ -1,8 +1,11 @@
 import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
+import 'package:extinct_animals/ui/view_model/extinct_animal_view_model.dart';
 import 'package:flutter/material.dart';
 
 class ChangeLanguageCustom extends StatefulWidget {
-  const ChangeLanguageCustom({super.key});
+  final ExtinctAnimalViewModel extinctAnimalViewModel;
+
+  const ChangeLanguageCustom({super.key, required this.extinctAnimalViewModel});
 
   @override
   State<ChangeLanguageCustom> createState() => _ChangeLanguageCustomState();
@@ -23,7 +26,9 @@ class _ChangeLanguageCustomState extends State<ChangeLanguageCustom> {
     return Row(
       children: <Widget>[
         IconButton(
-          onPressed: _changeLanguageViewModel.backLanguage,
+          onPressed: () async {
+            _changeLanguageViewModel.backLanguage();
+          },
           icon: Icon(Icons.chevron_left, color: Colors.white),
           padding: EdgeInsets.zero,
           constraints: BoxConstraints(),

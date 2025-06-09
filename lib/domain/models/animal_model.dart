@@ -1,11 +1,11 @@
 class AnimalModel {
-  final String binomialName;
-  final String? commonName;
-  final String location;
-  final String lastRecord;
-  final String wikiLink;
-  final String? imageSrc;
-  final String? shortDesc;
+  String binomialName;
+  String? commonName;
+  String location;
+  String lastRecord;
+  String wikiLink;
+  String? imageSrc;
+  String? shortDesc;
 
   AnimalModel({
     required this.binomialName,

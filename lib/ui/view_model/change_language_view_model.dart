@@ -12,7 +12,7 @@ class ChangeLanguageViewModel {
   static ChangeLanguageViewModel get instance => _instance;
 
   ChangeLanguageViewModel._() {
-    Set<String> country_codes = {
+    Set<String> countryCodes = {
       PlatformDispatcher.instance.locale.countryCode.toString(),
       'BR',
       'GF',
@@ -20,7 +20,7 @@ class ChangeLanguageViewModel {
       'IT',
       'RU',
     };
-    _languageModel.addAll(country_codes.map((e) => LanguageModel(e)));
+    _languageModel.addAll(countryCodes.map((e) => LanguageModel(e)));
     _language.value = _languageModel.first.language;
   }
 

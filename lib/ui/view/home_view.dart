@@ -52,7 +52,9 @@ class _HomeViewState extends State<HomeView> {
                   top: 10,
                   bottom: 10,
                 ),
-                child: ChangeLanguageCustom(),
+                child: ChangeLanguageCustom(
+                  extinctAnimalViewModel: _extinctAnimalViewModel,
+                ),
               ),
               Center(
                 child: Padding(

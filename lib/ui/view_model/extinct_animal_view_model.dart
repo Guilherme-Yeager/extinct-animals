@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:extinct_animals/data/services/extinct_service.dart';
 import 'package:extinct_animals/domain/models/animal_model.dart';
+import 'package:translator/translator.dart';
 
 class ExtinctAnimalViewModel {
   final ValueNotifier<AnimalModel?> _animalModel = ValueNotifier<AnimalModel?>(
@@ -29,5 +30,11 @@ class ExtinctAnimalViewModel {
       return;
     }
     _animalModel.value = null;
+  }
+
+  Future<void> modifyLanguageData(String languageCode) async {
+    if (animalModel.value != null) {
+      // TODO: Modificar os dados do animal aqui
+    }
   }
 }
