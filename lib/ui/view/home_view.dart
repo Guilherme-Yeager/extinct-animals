@@ -99,15 +99,21 @@ class _HomeViewState extends State<HomeView> {
                       if (location != null) ...[
                         SizedBox(height: 10),
                         TextButton(
-                          onPressed:
-                              () => Navigator.push(
+                          onPressed: () {
+                            final currentAnimal = _extinctAnimalViewModel.animalModel.value;
+                            if (currentAnimal != null) {
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute<void>(
-                                  builder:
-                                      (BuildContext context) =>
-                                          const DetailsView(),
+                                  builder: (BuildContext context) => DetailsView(animal: currentAnimal), // Passa o animal
                                 ),
-                              ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Nenhum animal carregado para detalhes.')),
+                              );
+                            }
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
