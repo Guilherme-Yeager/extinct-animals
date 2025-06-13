@@ -92,7 +92,11 @@ class _DetailsViewState extends State<DetailsView> {
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            const Icon(Icons.pets, color: Colors.white, size: 24),
+                            Image.asset(
+                              'assets/img/Kawaii Dinosaur.png',
+                              width: 24,
+                              height: 24,
+                            ),
                             const SizedBox(width: 10),
                             const Text(
                               'Nome',
