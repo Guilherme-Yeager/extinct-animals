@@ -13,7 +13,7 @@ Uma aplicação mobile para os desenvolvedores aprimorarem suas boas práticas d
 
 
 ## 🚀 Tecnologias
-- Flutter (ou informe a tecnologia que usou)
+- Flutter
 - Consumo de API REST
 - Aplicação de Padrões de Projeto (Design Patterns)
 
