@@ -4,10 +4,13 @@
   </h1>
 </div>
 
-Uma aplicação mobile para os desenvolvedores aprimorarem suas boas práticas de programação, utilizando **padrões de projeto** na prática.
-O app consome dados da API pública [Extinct API](https://cheba-apis.vercel.app/?ref=freepublicapis.com) e exibe informações interessantes e curiosas na palma da mão.
-Além de oferecer conteúdo, todo o desenvolvimento do app foi pensado aplicando alguns padrões de projeto como Singleton e Abstract Factory, servindo como exemplo prático 
-para quem deseja entender como utilizá-los no desenvolvimento mobile.
+<p align="justify">
+Uma aplicação mobile para os desenvolvedores aprimorarem suas boas práticas de programação, utilizando <strong>padrões de projeto</strong> na prática. 
+  O app consome dados da API pública <a href="https://cheba-apis.vercel.app/?ref=freepublicapis.com">Extinct API</a> e exibe informações interessantes 
+  e curiosas na palma da mão. Além de oferecer conteúdo, todo o desenvolvimento do app foi pensado aplicando alguns padrões de projeto como Singleton 
+  e Abstract Factory, servindo como exemplo prático para quem deseja entender como utilizá-los no desenvolvimento mobile.
+</p>
+
 
 ## 🚀 Tecnologias
 - Flutter (ou informe a tecnologia que usou)
