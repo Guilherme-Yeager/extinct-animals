@@ -19,15 +19,31 @@ class _HomeViewState extends State<HomeView> {
       ExtinctAnimalViewModel();
   bool _isLoading = false;
 
+  String _appBarTitle = 'Animails extintos';
+  String _buttonText = 'Novo';
+  String _detailsText = 'Detailhes';
+
   @override
   void initState() {
     super.initState();
-    _changeLanguageViewModel.language.addListener(() => setState(() {}));
+    _changeLanguageViewModel.languageModel.addListener(_loadText);
     _extinctAnimalViewModel.animalModel.addListener(
       () => setState(() {
         _isLoading = !_isLoading;
       }),
     );
+  }
+
+  Future<void> _loadText() async {
+    final String viewTexts = await _changeLanguageViewModel.modifyLanguageText(
+      'Extinct animals; Details; New',
+    );
+    setState(() {
+      final List<String> splitText = viewTexts.split(';');
+      _appBarTitle = splitText[0];
+      _detailsText = splitText[1];
+      _buttonText = splitText[2];
+    });
   }
 
   @override
@@ -39,7 +55,7 @@ class _HomeViewState extends State<HomeView> {
     final String? location =
         _extinctAnimalViewModel.animalModel.value?.location;
     return Scaffold(
-      appBar: AppBar(title: Text('Animais Extintos'), centerTitle: true),
+      appBar: AppBar(title: Text(_appBarTitle), centerTitle: true),
       backgroundColor: ColorsCustom.main,
       body: SingleChildScrollView(
         child: SafeArea(
@@ -100,17 +116,25 @@ class _HomeViewState extends State<HomeView> {
                         SizedBox(height: 10),
                         TextButton(
                           onPressed: () {
-                            final currentAnimal = _extinctAnimalViewModel.animalModel.value;
+                            final currentAnimal =
+                                _extinctAnimalViewModel.animalModel.value;
                             if (currentAnimal != null) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => DetailsView(animal: currentAnimal), // Passa o animal
+                                  builder:
+                                      (BuildContext context) => DetailsView(
+                                        animal: currentAnimal,
+                                      ), // Passa o animal
                                 ),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Nenhum animal carregado para detalhes.')),
+                                const SnackBar(
+                                  content: Text(
+                                    'Nenhum animal carregado para detalhes.',
+                                  ),
+                                ),
                               );
                             }
                           },
@@ -124,7 +148,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Detalhes',
+                                _detailsText,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -195,7 +219,10 @@ class _HomeViewState extends State<HomeView> {
                           await _extinctAnimalViewModel.newRandomAnimal();
                         },
                         style: ElevatedButton.styleFrom(
-                          fixedSize: Size(100, 35),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         child:
                             _isLoading
@@ -208,12 +235,15 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 )
                                 : Text(
-                                  'Novo',
+                                  _buttonText,
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  softWrap: false,
                                 ),
                       ),
                       SizedBox(height: 20),

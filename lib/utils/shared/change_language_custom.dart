@@ -18,7 +18,7 @@ class _ChangeLanguageCustomState extends State<ChangeLanguageCustom> {
   @override
   void initState() {
     super.initState();
-    _changeLanguageViewModel.language.addListener(() => setState(() {}));
+    _changeLanguageViewModel.languageModel.addListener(() => setState(() {}));
   }
 
   @override
@@ -43,7 +43,7 @@ class _ChangeLanguageCustomState extends State<ChangeLanguageCustom> {
           ),
           alignment: Alignment.center,
           child: Image.asset(
-            'icons/flags/png100px/${_changeLanguageViewModel.language.value}.png',
+            'icons/flags/png100px/${_changeLanguageViewModel.languageModel.value!.countyrCode}.png',
             package: 'country_icons',
             fit: BoxFit.contain,
             width: 40,

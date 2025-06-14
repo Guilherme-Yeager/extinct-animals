@@ -1,7 +1,8 @@
 import 'package:circular_linked_list/circular_linked_list.dart';
 
 final class LanguageModel with CircularLinkedListEntry<LanguageModel> {
-  String language;
+  final String countyrCode;
+  final String languageCode;
 
-  LanguageModel(this.language);
+  LanguageModel({required this.countyrCode, required this.languageCode});
 }
