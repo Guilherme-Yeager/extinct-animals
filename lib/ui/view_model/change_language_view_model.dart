@@ -9,11 +9,26 @@ import 'package:translator/translator.dart';
 class ChangeLanguageViewModel {
   final ValueNotifier<LanguageModel?> _languageModel =
       ValueNotifier<LanguageModel?>(null);
+  ValueNotifier<LanguageModel?> get languageModel => _languageModel;
+
   static final ChangeLanguageViewModel _instance = ChangeLanguageViewModel._();
+  static ChangeLanguageViewModel get instance => _instance;
+
   final CircularLinkedList<LanguageModel> _languageModelList =
       CircularLinkedList<LanguageModel>();
-  static ChangeLanguageViewModel get instance => _instance;
-  ValueNotifier<LanguageModel?> get languageModel => _languageModel;
+
+  final Map<String, List<String>> _labels = {
+    'Home': [''],
+    'Details': [''],
+    'Shared': [''],
+  };
+
+  List<String>? getLabels(String screen) {
+    return _labels[screen];
+  }
+
+  final String _textBase =
+      'Extinct animals; Details; New; Back; Name; Scientific Name; Short Description';
 
   ChangeLanguageViewModel._() {
     final Map<String, String> codes = {
@@ -58,10 +73,13 @@ class ChangeLanguageViewModel {
     }
   }
 
-  Future<String> modifyLanguageText(String text) async {
-    return (await text.translate(
+  Future<void> modifyLanguageLabels() async {
+    List<String> words = (await _textBase.translate(
       from: 'en',
-      to: _languageModel.value!.languageCode.toLowerCase(),
-    )).text;
+      to: _languageModel.value!.languageCode,
+    )).text.split(';');
+    _labels['Home'] = [words[0], words[1], words[2]];
+    _labels['Details'] = [words[3], words[1], words[4], words[5], words[6]];
+    return;
   }
 }

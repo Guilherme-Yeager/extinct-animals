@@ -1,7 +1,7 @@
 import 'package:extinct_animals/ui/view/details_view.dart';
 import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
+import 'package:extinct_animals/ui/view_model/disable_view_model.dart';
 import 'package:extinct_animals/ui/view_model/extinct_animal_view_model.dart';
-import 'package:extinct_animals/utils/shared/change_language_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:extinct_animals/utils/constants/colors_custom.dart';
 
@@ -17,32 +17,23 @@ class _HomeViewState extends State<HomeView> {
       ChangeLanguageViewModel.instance;
   final ExtinctAnimalViewModel _extinctAnimalViewModel =
       ExtinctAnimalViewModel();
-  bool _isLoading = false;
+  final DisableViewModel _disableViewModel = DisableViewModel();
 
-  String _appBarTitle = 'Animails extintos';
-  String _buttonText = 'Novo';
-  String _detailsText = 'Detailhes';
+  late List<String> _labels;
 
   @override
   void initState() {
     super.initState();
+    _labels = _changeLanguageViewModel.getLabels('Home')!;
     _changeLanguageViewModel.languageModel.addListener(_loadText);
-    _extinctAnimalViewModel.animalModel.addListener(
-      () => setState(() {
-        _isLoading = !_isLoading;
-      }),
-    );
+    _extinctAnimalViewModel.animalModel.addListener(() => setState(() {}));
+    _disableViewModel.screens.addListener(() => setState(() {}));
   }
 
   Future<void> _loadText() async {
-    final String viewTexts = await _changeLanguageViewModel.modifyLanguageText(
-      'Extinct animals; Details; New',
-    );
+    await _changeLanguageViewModel.modifyLanguageLabels();
     setState(() {
-      final List<String> splitText = viewTexts.split(';');
-      _appBarTitle = splitText[0];
-      _detailsText = splitText[1];
-      _buttonText = splitText[2];
+      _labels = _changeLanguageViewModel.getLabels('Home')!;
     });
   }
 
@@ -55,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
     final String? location =
         _extinctAnimalViewModel.animalModel.value?.location;
     return Scaffold(
-      appBar: AppBar(title: Text(_appBarTitle), centerTitle: true),
+      appBar: AppBar(title: Text(_labels[0]), centerTitle: true),
       backgroundColor: ColorsCustom.main,
       body: SingleChildScrollView(
         child: SafeArea(
@@ -68,8 +59,58 @@ class _HomeViewState extends State<HomeView> {
                   top: 10,
                   bottom: 10,
                 ),
-                child: ChangeLanguageCustom(
-                  extinctAnimalViewModel: _extinctAnimalViewModel,
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      onPressed:
+                          _disableViewModel.screens.value['Home']
+                              ? null
+                              : () async {
+                                _changeLanguageViewModel.backLanguage();
+                                setState(() {
+                                  _disableViewModel.disabledScreen('Home');
+                                });
+                                await _loadText();
+                                _disableViewModel.enableScreen('Home');
+                              },
+                      icon: Icon(Icons.chevron_left, color: Colors.white),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'icons/flags/png100px/${_changeLanguageViewModel.languageModel.value!.countyrCode}.png',
+                        package: 'country_icons',
+                        fit: BoxFit.contain,
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed:
+                          _disableViewModel.screens.value['Home']
+                              ? null
+                              : () async {
+                                _changeLanguageViewModel.nextLanguage();
+                                setState(() {
+                                  _disableViewModel.disabledScreen('Home');
+                                });
+                                await _loadText();
+                                _disableViewModel.enableScreen('Home');
+                              },
+                      icon: Icon(Icons.chevron_right, color: Colors.white),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(),
+                    ),
+                  ],
                 ),
               ),
               Center(
@@ -94,19 +135,26 @@ class _HomeViewState extends State<HomeView> {
                       if (imageSrc != null) ...[
                         ClipRRect(
                           borderRadius: BorderRadius.circular(30),
-                          child: Image.network(
-                            imageSrc,
-                            loadingBuilder: (context, child, _) {
-                              return child;
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return errorImage();
-                            },
-                            width: double.infinity,
-                            height: 250,
-                            fit: BoxFit.fill,
-                            semanticLabel: 'Animal Extinct',
-                          ),
+                          child:
+                              _disableViewModel.screens.value['Home']
+                                  ? SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : Image.network(
+                                    imageSrc,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return errorImage();
+                                    },
+                                    width: double.infinity,
+                                    height: 250,
+                                    fit: BoxFit.fill,
+                                  ),
                         ),
                       ] else ...[
                         errorImage(),
@@ -118,25 +166,14 @@ class _HomeViewState extends State<HomeView> {
                           onPressed: () {
                             final currentAnimal =
                                 _extinctAnimalViewModel.animalModel.value;
-                            if (currentAnimal != null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder:
-                                      (BuildContext context) => DetailsView(
-                                        animal: currentAnimal,
-                                      ), // Passa o animal
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Nenhum animal carregado para detalhes.',
-                                  ),
-                                ),
-                              );
-                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder:
+                                    (BuildContext context) =>
+                                        DetailsView(animal: currentAnimal!),
+                              ),
+                            );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +185,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                _detailsText,
+                                _labels[1],
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -212,39 +249,37 @@ class _HomeViewState extends State<HomeView> {
                       ],
                       SizedBox(height: 35),
                       ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            _isLoading = !_isLoading;
-                          });
-                          await _extinctAnimalViewModel.newRandomAnimal();
-                        },
+                        onPressed:
+                            _disableViewModel.screens.value['Home']
+                                ? null
+                                : () async {
+                                  setState(() {
+                                    _disableViewModel.disabledScreen('Home');
+                                  });
+                                  await _extinctAnimalViewModel
+                                      .newRandomAnimal();
+                                  _disableViewModel.enableScreen('Home');
+                                  _changeLanguageViewModel
+                                      .modifyLanguageLabels();
+                                },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
                           ),
+                          disabledBackgroundColor: Colors.white,
                         ),
-                        child:
-                            _isLoading
-                                ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.black,
-                                    strokeWidth: 2.5,
-                                  ),
-                                )
-                                : Text(
-                                  _buttonText,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.visible,
-                                  softWrap: false,
-                                ),
+                        child: Text(
+                          _labels[2],
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.visible,
+                          softWrap: false,
+                        ),
                       ),
                       SizedBox(height: 20),
                     ],

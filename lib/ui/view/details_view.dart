@@ -1,35 +1,34 @@
 import 'package:extinct_animals/domain/models/animal_model.dart';
+import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:extinct_animals/utils/constants/colors_custom.dart';
 
-
 class DetailsView extends StatefulWidget {
-
   final AnimalModel animal;
+  final ChangeLanguageViewModel _changeLanguageViewModel =
+      ChangeLanguageViewModel.instance;
 
-  const DetailsView({super.key, required this.animal}); 
+  DetailsView({super.key, required this.animal});
 
   @override
   State<DetailsView> createState() => _DetailsViewState();
 }
 
 class _DetailsViewState extends State<DetailsView> {
- 
   @override
   Widget build(BuildContext context) {
-    // Acesse os dados do animal via widget.animal
     final String? nomeComum = widget.animal.commonName;
     final String nomeCientifico = widget.animal.binomialName;
     final String? descricao = widget.animal.shortDesc;
-
+    final List<String> labels =
+        widget._changeLanguageViewModel.getLabels('Details')!;
     return Scaffold(
       appBar: AppBar(
-        
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text('Voltar'),
+        title: Text(labels[0]),
         backgroundColor: ColorsCustom.white,
         elevation: 0,
       ),
@@ -39,10 +38,10 @@ class _DetailsViewState extends State<DetailsView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
                 child: Text(
-                  'Detalhes',
+                  labels[1],
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -66,10 +65,14 @@ class _DetailsViewState extends State<DetailsView> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.science, color: Colors.white, size: 24),
+                            const Icon(
+                              Icons.science,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             const SizedBox(width: 10),
-                            const Text(
-                              'Nome Científico',
+                            Text(
+                              labels[2],
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -98,8 +101,8 @@ class _DetailsViewState extends State<DetailsView> {
                               height: 24,
                             ),
                             const SizedBox(width: 10),
-                            const Text(
-                              'Nome',
+                            Text(
+                              labels[3],
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -111,7 +114,7 @@ class _DetailsViewState extends State<DetailsView> {
                         Padding(
                           padding: const EdgeInsets.only(left: 34.0, top: 4.0),
                           child: Text(
-                            nomeComum??'',
+                            nomeComum ?? '',
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 16,
@@ -121,10 +124,14 @@ class _DetailsViewState extends State<DetailsView> {
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            const Icon(Icons.description, color: Colors.white, size: 24),
+                            const Icon(
+                              Icons.description,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             const SizedBox(width: 10),
-                            const Text(
-                              'Descrição',
+                            Text(
+                              labels[4],
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -136,7 +143,7 @@ class _DetailsViewState extends State<DetailsView> {
                         Padding(
                           padding: const EdgeInsets.only(left: 34.0, top: 4.0),
                           child: Text(
-                            descricao??'',
+                            descricao ?? '',
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 16,
