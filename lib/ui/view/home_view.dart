@@ -21,6 +21,8 @@ class _HomeViewState extends State<HomeView> {
 
   late List<String> _labels;
 
+  bool _isSave = false;
+
   @override
   void initState() {
     super.initState();
@@ -104,6 +106,25 @@ class _HomeViewState extends State<HomeView> {
                     padding: EdgeInsets.zero,
                     constraints: BoxConstraints(),
                   ),
+                  Expanded(child: Container()),
+                  TextButton(
+                    onPressed: () => print('0'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.photo_library, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Text(
+                          _labels[3],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -163,39 +184,69 @@ class _HomeViewState extends State<HomeView> {
                         ],
                         if (location != null) ...[
                           SizedBox(height: 10),
-                          TextButton(
-                            onPressed: () {
-                              final currentAnimal =
-                                  _extinctAnimalViewModel.animalModel.value;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder:
-                                      (BuildContext context) =>
-                                          DetailsView(animal: currentAnimal!),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(child: Container()),
+                              SizedBox(width: 30),
+                              Expanded(
+                                flex: 10,
+                                child: TextButton(
+                                  onPressed: () {
+                                    final currentAnimal =
+                                        _extinctAnimalViewModel
+                                            .animalModel
+                                            .value;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder:
+                                            (BuildContext context) =>
+                                                DetailsView(
+                                                  animal: currentAnimal!,
+                                                ),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.info_outline,
+                                        size: 26,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        _labels[1],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.info_outline,
-                                  size: 26,
+                              ),
+                              Expanded(child: Container()),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isSave = !_isSave;
+                                  });
+                                  if (_isSave) {
+                                  } else {}
+                                },
+                                icon: Icon(
+                                  _isSave
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
                                   color: Colors.white,
                                 ),
-                                SizedBox(width: 5),
-                                Text(
-                                  _labels[1],
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           SizedBox(height: 15),
                           Row(
@@ -282,6 +333,7 @@ class _HomeViewState extends State<HomeView> {
                             softWrap: false,
                           ),
                         ),
+                        SizedBox(height: 15),
                       ],
                     ),
                   ),

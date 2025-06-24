@@ -16,20 +16,21 @@ class DetailsView extends StatefulWidget {
 }
 
 class _DetailsViewState extends State<DetailsView> {
+  bool _clickLink = false;
+
   @override
   Widget build(BuildContext context) {
     final String? nomeComum = widget.animal.commonName;
     final String nomeCientifico = widget.animal.binomialName;
     final String? descricao = widget.animal.shortDesc;
     final String wikiLink = widget.animal.wikiLink;
-
     final List<String> labels =
         widget._changeLanguageViewModel.getLabels('Details')!;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => _clickLink ? null : Navigator.of(context).pop(),
         ),
         title: Text(labels[0]),
         backgroundColor: ColorsCustom.white,
@@ -176,21 +177,42 @@ class _DetailsViewState extends State<DetailsView> {
                         Padding(
                           padding: const EdgeInsets.only(left: 34.0, top: 4.0),
                           child: InkWell(
-                            onTap: () async {
-                              final Uri uri = Uri.parse(wikiLink);
-                              if (await canLaunchUrl(uri)) {
-                                await launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              } else {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(labels[6])),
-                                  );
-                                }
-                              }
-                            },
+                            onTap:
+                                _clickLink
+                                    ? null
+                                    : () async {
+                                      setState(() {
+                                        _clickLink = true;
+                                      });
+                                      ScaffoldFeatureController<
+                                        SnackBar,
+                                        SnackBarClosedReason
+                                      >?
+                                      snackBar;
+                                      final Uri uri = Uri.parse(wikiLink);
+                                      final success = await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.platformDefault,
+                                      );
+                                      if (!success) {
+                                        if (context.mounted) {
+                                          snackBar = ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(content: Text(labels[6])),
+                                          );
+                                        }
+                                      }
+                                      if (snackBar != null) {
+                                        await Future.delayed(
+                                          const Duration(seconds: 1),
+                                        );
+                                        snackBar.close();
+                                      }
+                                      setState(() {
+                                        _clickLink = false;
+                                      });
+                                    },
                             child: Text(
                               wikiLink,
                               style: const TextStyle(
@@ -206,6 +228,7 @@ class _DetailsViewState extends State<DetailsView> {
                   ),
                 ),
               ),
+              SizedBox(height: 15),
             ],
           ),
         ),

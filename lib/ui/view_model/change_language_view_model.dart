@@ -28,7 +28,7 @@ class ChangeLanguageViewModel {
   }
 
   final String _textBase =
-      'Extinct animals; Details; New; Back; Name; Scientific Name; Short Description; Link; Could not open link';
+      'Extinct animals; Details; New; Back; Name; Scientific Name; Short Description; Link; Could not open link; Favorites';
 
   ChangeLanguageViewModel._() {
     final Map<String, String> codes = {
@@ -78,7 +78,7 @@ class ChangeLanguageViewModel {
       from: 'en',
       to: _languageModel.value!.languageCode,
     )).text.split(';');
-    _labels['Home'] = [words[0], words[1], words[2]];
+    _labels['Home'] = [words[0], words[1], words[2], words[9]];
     _labels['Details'] = [
       words[3],
       words[1],
