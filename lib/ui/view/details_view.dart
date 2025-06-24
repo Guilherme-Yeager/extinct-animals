@@ -2,6 +2,7 @@ import 'package:extinct_animals/domain/models/animal_model.dart';
 import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:extinct_animals/utils/constants/colors_custom.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsView extends StatefulWidget {
   final AnimalModel animal;
@@ -20,6 +21,8 @@ class _DetailsViewState extends State<DetailsView> {
     final String? nomeComum = widget.animal.commonName;
     final String nomeCientifico = widget.animal.binomialName;
     final String? descricao = widget.animal.shortDesc;
+    final String wikiLink = widget.animal.wikiLink;
+
     final List<String> labels =
         widget._changeLanguageViewModel.getLabels('Details')!;
     return Scaffold(
@@ -148,6 +151,53 @@ class _DetailsViewState extends State<DetailsView> {
                               color: Colors.white70,
                               fontSize: 16,
                               height: 1.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.insert_link,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              labels[5],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 34.0, top: 4.0),
+                          child: InkWell(
+                            onTap: () async {
+                              final Uri uri = Uri.parse(wikiLink);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(labels[6])),
+                                  );
+                                }
+                              }
+                            },
+                            child: Text(
+                              wikiLink,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                                height: 1.5,
+                              ),
                             ),
                           ),
                         ),

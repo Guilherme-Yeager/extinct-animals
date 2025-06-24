@@ -48,246 +48,247 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(title: Text(_labels[0]), centerTitle: true),
       backgroundColor: ColorsCustom.main,
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 10,
-                  bottom: 10,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      onPressed:
-                          _disableViewModel.screens.value['Home']
-                              ? null
-                              : () async {
-                                _changeLanguageViewModel.backLanguage();
-                                setState(() {
-                                  _disableViewModel.disabledScreen('Home');
-                                });
-                                await _loadText();
-                                _disableViewModel.enableScreen('Home');
-                              },
-                      icon: Icon(Icons.chevron_left, color: Colors.white),
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    onPressed:
+                        _disableViewModel.screens.value['Home']
+                            ? null
+                            : () async {
+                              _changeLanguageViewModel.backLanguage();
+                              setState(() {
+                                _disableViewModel.disabledScreen('Home');
+                              });
+                              await _loadText();
+                              _disableViewModel.enableScreen('Home');
+                            },
+                    icon: Icon(Icons.chevron_left, color: Colors.white),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                    Container(
-                      width: 50,
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'icons/flags/png100px/${_changeLanguageViewModel.languageModel.value!.countyrCode}.png',
+                      package: 'country_icons',
+                      fit: BoxFit.contain,
+                      width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'icons/flags/png100px/${_changeLanguageViewModel.languageModel.value!.countyrCode}.png',
-                        package: 'country_icons',
-                        fit: BoxFit.contain,
-                        width: 40,
-                        height: 40,
-                      ),
                     ),
-                    IconButton(
-                      onPressed:
-                          _disableViewModel.screens.value['Home']
-                              ? null
-                              : () async {
-                                _changeLanguageViewModel.nextLanguage();
-                                setState(() {
-                                  _disableViewModel.disabledScreen('Home');
-                                });
-                                await _loadText();
-                                _disableViewModel.enableScreen('Home');
-                              },
-                      icon: Icon(Icons.chevron_right, color: Colors.white),
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
-                    ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    onPressed:
+                        _disableViewModel.screens.value['Home']
+                            ? null
+                            : () async {
+                              _changeLanguageViewModel.nextLanguage();
+                              setState(() {
+                                _disableViewModel.disabledScreen('Home');
+                              });
+                              await _loadText();
+                              _disableViewModel.enableScreen('Home');
+                            },
+                    icon: Icon(Icons.chevron_right, color: Colors.white),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                  ),
+                ],
               ),
-              Center(
+            ),
+            Expanded(
+              child: Center(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Opacity(
-                        opacity: commonName != null ? 1 : 0,
-                        child: Text(
-                          commonName ?? '',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Opacity(
+                          opacity: commonName != null ? 1 : 0,
+                          child: Text(
+                            commonName ?? '',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      SizedBox(height: 15),
-                      if (imageSrc != null) ...[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child:
-                              _disableViewModel.screens.value['Home']
-                                  ? SizedBox(
-                                    width: 200,
-                                    height: 200,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                  : Image.network(
-                                    imageSrc,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return errorImage();
-                                    },
-                                    width: double.infinity,
-                                    height: 250,
-                                    fit: BoxFit.fill,
-                                  ),
-                        ),
-                      ] else ...[
-                        errorImage(),
                         SizedBox(height: 15),
-                      ],
-                      if (location != null) ...[
-                        SizedBox(height: 10),
-                        TextButton(
-                          onPressed: () {
-                            final currentAnimal =
-                                _extinctAnimalViewModel.animalModel.value;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder:
-                                    (BuildContext context) =>
-                                        DetailsView(animal: currentAnimal!),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        if (imageSrc != null) ...[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child:
+                                _disableViewModel.screens.value['Home']
+                                    ? SizedBox(
+                                      width: 200,
+                                      height: 200,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                    : Image.network(
+                                      imageSrc,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return errorImage();
+                                      },
+                                      width: double.infinity,
+                                      height: 250,
+                                      fit: BoxFit.fill,
+                                    ),
+                          ),
+                        ] else ...[
+                          errorImage(),
+                          SizedBox(height: 15),
+                        ],
+                        if (location != null) ...[
+                          SizedBox(height: 10),
+                          TextButton(
+                            onPressed: () {
+                              final currentAnimal =
+                                  _extinctAnimalViewModel.animalModel.value;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder:
+                                      (BuildContext context) =>
+                                          DetailsView(animal: currentAnimal!),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.info_outline,
+                                  size: 26,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  _labels[1],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Row(
                             children: <Widget>[
                               Icon(
-                                Icons.info_outline,
+                                Icons.location_on,
+                                size: 26,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 5),
+                              Flexible(
+                                child: Text(
+                                  _extinctAnimalViewModel
+                                      .animalModel
+                                      .value!
+                                      .location,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                  softWrap: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.calendar_today,
                                 size: 26,
                                 color: Colors.white,
                               ),
                               SizedBox(width: 5),
                               Text(
-                                _labels[1],
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.location_on,
-                              size: 26,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 5),
-                            Flexible(
-                              child: Text(
                                 _extinctAnimalViewModel
                                     .animalModel
                                     .value!
-                                    .location,
+                                    .lastRecord,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                textAlign: TextAlign.start,
+                                textAlign: TextAlign.center,
                                 softWrap: true,
                               ),
+                            ],
+                          ),
+                        ],
+                        SizedBox(height: 35),
+                        ElevatedButton(
+                          onPressed:
+                              _disableViewModel.screens.value['Home']
+                                  ? null
+                                  : () async {
+                                    setState(() {
+                                      _disableViewModel.disabledScreen('Home');
+                                    });
+                                    await _extinctAnimalViewModel
+                                        .newRandomAnimal();
+                                    _disableViewModel.enableScreen('Home');
+                                    _changeLanguageViewModel
+                                        .modifyLanguageLabels();
+                                  },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.calendar_today,
-                              size: 26,
-                              color: Colors.white,
+                            disabledBackgroundColor: Colors.white,
+                          ),
+                          child: Text(
+                            _labels[2],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(width: 5),
-                            Text(
-                              _extinctAnimalViewModel
-                                  .animalModel
-                                  .value!
-                                  .lastRecord,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                            ),
-                          ],
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                            softWrap: false,
+                          ),
                         ),
                       ],
-                      SizedBox(height: 35),
-                      ElevatedButton(
-                        onPressed:
-                            _disableViewModel.screens.value['Home']
-                                ? null
-                                : () async {
-                                  setState(() {
-                                    _disableViewModel.disabledScreen('Home');
-                                  });
-                                  await _extinctAnimalViewModel
-                                      .newRandomAnimal();
-                                  _disableViewModel.enableScreen('Home');
-                                  _changeLanguageViewModel
-                                      .modifyLanguageLabels();
-                                },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          disabledBackgroundColor: Colors.white,
-                        ),
-                        child: Text(
-                          _labels[2],
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.visible,
-                          softWrap: false,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
