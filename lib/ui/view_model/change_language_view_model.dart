@@ -20,7 +20,7 @@ class ChangeLanguageViewModel {
   final Map<String, List<String>> _labels = {
     'Home': [''],
     'Details': [''],
-    'Shared': [''],
+    'Favorites': [''],
   };
 
   List<String>? getLabels(String screen) {
@@ -28,7 +28,7 @@ class ChangeLanguageViewModel {
   }
 
   final String _textBase =
-      'Extinct animals; Details; New; Back; Name; Scientific Name; Short Description; Link; Could not open link; Favorites';
+      'Extinct animals; Details; New; Back; Name; Scientific Name; Short Description; Link; Could not open link; Favorites; No favorites';
 
   ChangeLanguageViewModel._() {
     final Map<String, String> codes = {
@@ -78,7 +78,7 @@ class ChangeLanguageViewModel {
       from: 'en',
       to: _languageModel.value!.languageCode,
     )).text.split(';');
-    _labels['Home'] = [words[0], words[1], words[2], words[9]];
+    _labels['Home'] = [words[0], words[1], words[2], words[9], words[10]];
     _labels['Details'] = [
       words[3],
       words[1],
@@ -88,6 +88,7 @@ class ChangeLanguageViewModel {
       words[7],
       words[8],
     ];
+    _labels['Favorites'] = [words[3], words[1]];
     return;
   }
 }

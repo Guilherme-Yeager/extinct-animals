@@ -33,7 +33,7 @@ class _DetailsViewState extends State<DetailsView> {
           onPressed: () => _clickLink ? null : Navigator.of(context).pop(),
         ),
         title: Text(labels[0]),
-        backgroundColor: ColorsCustom.white,
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       backgroundColor: ColorsCustom.main,

@@ -1,7 +1,11 @@
+import 'package:extinct_animals/domain/models/animal_model.dart';
 import 'package:extinct_animals/ui/view/details_view.dart';
+import 'package:extinct_animals/ui/view/favorites_view.dart';
 import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
 import 'package:extinct_animals/ui/view_model/disable_view_model.dart';
 import 'package:extinct_animals/ui/view_model/extinct_animal_view_model.dart';
+import 'package:extinct_animals/ui/view_model/shared_preferences_view_model.dart';
+import 'package:extinct_animals/utils/shared/error_image_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:extinct_animals/utils/constants/colors_custom.dart';
 
@@ -18,10 +22,11 @@ class _HomeViewState extends State<HomeView> {
   final ExtinctAnimalViewModel _extinctAnimalViewModel =
       ExtinctAnimalViewModel();
   final DisableViewModel _disableViewModel = DisableViewModel();
+  final SharedPreferencesViewModel _sharedPreferencesViewModel =
+      SharedPreferencesViewModel();
 
   late List<String> _labels;
-
-  bool _isSave = false;
+  bool _isFavorite = false, _isSaving = false, _isGallery = false;
 
   @override
   void initState() {
@@ -30,6 +35,23 @@ class _HomeViewState extends State<HomeView> {
     _changeLanguageViewModel.languageModel.addListener(_loadText);
     _extinctAnimalViewModel.animalModel.addListener(() => setState(() {}));
     _disableViewModel.screens.addListener(() => setState(() {}));
+  }
+
+  void _checkIsFavorite() {
+    bool isFavorite = false;
+    if (_extinctAnimalViewModel.animalModel.value != null) {
+      if (_sharedPreferencesViewModel.getAnimal(
+            _extinctAnimalViewModel.animalModel.value!.id.toString(),
+          ) !=
+          null) {
+        isFavorite = true;
+      } else {
+        isFavorite = false;
+      }
+    }
+    setState(() {
+      _isFavorite = isFavorite;
+    });
   }
 
   Future<void> _loadText() async {
@@ -108,7 +130,50 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   Expanded(child: Container()),
                   TextButton(
-                    onPressed: () => print('0'),
+                    onPressed:
+                        _isGallery
+                            ? null
+                            : () async {
+                              setState(() {
+                                _isGallery = true;
+                              });
+                              List<AnimalModel> animals =
+                                  await _sharedPreferencesViewModel
+                                      .getAllAnimals();
+                              ScaffoldFeatureController<
+                                SnackBar,
+                                SnackBarClosedReason
+                              >?
+                              snackBar;
+                              if (animals.isEmpty) {
+                                if (context.mounted) {
+                                  snackBar = ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(_labels[4]),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              } else if (context.mounted) {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder:
+                                        (BuildContext context) =>
+                                            FavoritesView(animals: animals),
+                                  ),
+                                );
+                                _checkIsFavorite();
+                              }
+                              if (snackBar != null) {
+                                await snackBar.closed;
+                              }
+                              setState(() {
+                                _isGallery = false;
+                              });
+                            },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -150,7 +215,8 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ),
                         SizedBox(height: 15),
-                        if (imageSrc != null) ...[
+                        if (imageSrc != null &&
+                            !imageSrc.contains("Sem imagem")) ...[
                           ClipRRect(
                             borderRadius: BorderRadius.circular(30),
                             child:
@@ -159,7 +225,7 @@ class _HomeViewState extends State<HomeView> {
                                       width: 200,
                                       height: 200,
                                       child: Center(
-                                        child: CircularProgressIndicator(
+                                        child: LinearProgressIndicator(
                                           color: Colors.white,
                                         ),
                                       ),
@@ -171,7 +237,7 @@ class _HomeViewState extends State<HomeView> {
                                         error,
                                         stackTrace,
                                       ) {
-                                        return errorImage();
+                                        return ErrorImageCustom.errorImage();
                                       },
                                       width: double.infinity,
                                       height: 250,
@@ -179,7 +245,7 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                           ),
                         ] else ...[
-                          errorImage(),
+                          ErrorImageCustom.errorImage(),
                           SizedBox(height: 15),
                         ],
                         if (location != null) ...[
@@ -189,58 +255,74 @@ class _HomeViewState extends State<HomeView> {
                             children: [
                               Expanded(child: Container()),
                               SizedBox(width: 30),
-                              Expanded(
-                                flex: 10,
-                                child: TextButton(
-                                  onPressed: () {
-                                    final currentAnimal =
-                                        _extinctAnimalViewModel
-                                            .animalModel
-                                            .value;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        builder:
-                                            (BuildContext context) =>
-                                                DetailsView(
-                                                  animal: currentAnimal!,
-                                                ),
-                                      ),
-                                    );
-                                  },
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.info_outline,
-                                        size: 26,
+                              TextButton(
+                                onPressed: () {
+                                  final currentAnimal =
+                                      _extinctAnimalViewModel.animalModel.value;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder:
+                                          (BuildContext context) => DetailsView(
+                                            animal: currentAnimal!,
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.info_outline,
+                                      size: 26,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      _labels[1],
+                                      style: TextStyle(
                                         color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        _labels[1],
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
                               ),
                               Expanded(child: Container()),
                               IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isSave = !_isSave;
-                                  });
-                                  if (_isSave) {
-                                  } else {}
-                                },
+                                onPressed:
+                                    _isSaving
+                                        ? null
+                                        : () async {
+                                          setState(() {
+                                            _isSaving = true;
+                                            _isFavorite = !_isFavorite;
+                                          });
+                                          if (_isFavorite) {
+                                            _sharedPreferencesViewModel
+                                                .saveAnimal(
+                                                  _extinctAnimalViewModel
+                                                      .animalModel
+                                                      .value!,
+                                                );
+                                          } else {
+                                            _sharedPreferencesViewModel
+                                                .removeAnimal(
+                                                  _extinctAnimalViewModel
+                                                      .animalModel
+                                                      .value!
+                                                      .id
+                                                      .toString(),
+                                                );
+                                          }
+                                          setState(() {
+                                            _isSaving = false;
+                                          });
+                                        },
                                 icon: Icon(
-                                  _isSave
+                                  _isFavorite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                   color: Colors.white,
@@ -309,10 +391,13 @@ class _HomeViewState extends State<HomeView> {
                                       _disableViewModel.disabledScreen('Home');
                                     });
                                     await _extinctAnimalViewModel
-                                        .newRandomAnimal();
+                                        .getRandomAnimal();
                                     _disableViewModel.enableScreen('Home');
                                     _changeLanguageViewModel
                                         .modifyLanguageLabels();
+                                    setState(() {
+                                      _isFavorite = false;
+                                    });
                                   },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
@@ -320,18 +405,28 @@ class _HomeViewState extends State<HomeView> {
                               vertical: 12,
                             ),
                             disabledBackgroundColor: Colors.white,
+                            overlayColor: Colors.green,
                           ),
-                          child: Text(
-                            _labels[2],
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.visible,
-                            softWrap: false,
-                          ),
+                          child:
+                              _disableViewModel.screens.value['Home']
+                                  ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                    ),
+                                  )
+                                  : Text(
+                                    _labels[2],
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.visible,
+                                    softWrap: false,
+                                  ),
                         ),
                         SizedBox(height: 15),
                       ],
@@ -343,18 +438,6 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget errorImage() {
-    return Container(
-      width: double.infinity,
-      height: 250,
-      decoration: BoxDecoration(
-        color: Colors.grey[400],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Icon(Icons.image_not_supported, size: 60, color: Colors.grey[700]),
     );
   }
 }
