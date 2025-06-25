@@ -1,5 +1,4 @@
 class AnimalModel {
-  int id;
   String binomialName;
   String? commonName;
   String location;
@@ -9,7 +8,6 @@ class AnimalModel {
   String? shortDesc;
 
   AnimalModel({
-    required this.id,
     required this.binomialName,
     this.commonName,
     required this.location,
@@ -20,7 +18,6 @@ class AnimalModel {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
     'binomialName': binomialName,
     'commonName': commonName,
     'location': location,
@@ -32,7 +29,6 @@ class AnimalModel {
 
   factory AnimalModel.fromJson(Map<String, dynamic> json) {
     return AnimalModel(
-      id: json['id'],
       binomialName: json['binomialName'],
       commonName: json['commonName'],
       location: json['location'],

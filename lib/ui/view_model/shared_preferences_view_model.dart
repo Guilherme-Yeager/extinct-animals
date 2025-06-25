@@ -16,7 +16,7 @@ class SharedPreferencesViewModel {
 
   Future<bool> saveAnimal(AnimalModel animalModel) async {
     return await _prefs.setString(
-      '${animalModel.id}Animal',
+      '${animalModel.binomialName}Animal',
       jsonEncode(animalModel),
     );
   }

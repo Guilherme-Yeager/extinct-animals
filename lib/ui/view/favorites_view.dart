@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:extinct_animals/domain/models/animal_model.dart';
 import 'package:extinct_animals/ui/view/details_view.dart';
 import 'package:extinct_animals/ui/view_model/change_language_view_model.dart';
@@ -29,6 +31,9 @@ class _FavoritesViewState extends State<FavoritesView> {
       appBar: AppBarCustom.buildAppBar(context, _labels![0]),
       backgroundColor: ColorsCustom.main,
       body: PageView(
+        scrollBehavior: const ScrollBehavior().copyWith(
+          dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+        ),
         children:
             widget.animals.map((animal) {
               return Padding(
@@ -65,7 +70,12 @@ class _FavoritesViewState extends State<FavoritesView> {
                       )
                     else
                       ErrorImageCustom.errorImage(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 2),
+                    Text(
+                      "${widget.animals.indexOf(animal) + 1}/${widget.animals.length}",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 2),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -107,7 +117,7 @@ class _FavoritesViewState extends State<FavoritesView> {
                         IconButton(
                           onPressed: () async {
                             await _sharedPreferencesViewModel.removeAnimal(
-                              animal.id.toString(),
+                              animal.binomialName,
                             );
                             setState(() {
                               widget.animals.remove(animal);

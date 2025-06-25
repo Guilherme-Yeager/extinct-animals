@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:circular_linked_list/circular_linked_list.dart';
-import 'package:extinct_animals/domain/models/animal_model.dart';
 import 'package:extinct_animals/domain/models/language_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:translator/translator.dart';
@@ -65,12 +64,6 @@ class ChangeLanguageViewModel {
   void backLanguage() {
     _languageModelList.first.previous!.setToHead();
     _languageModel.value = _languageModelList.first;
-  }
-
-  Future<void> modifyLanguageData(AnimalModel? animalModel) async {
-    if (animalModel != null) {
-      // TODO: Modificar os dados do animal aqui
-    }
   }
 
   Future<void> modifyLanguageLabels() async {

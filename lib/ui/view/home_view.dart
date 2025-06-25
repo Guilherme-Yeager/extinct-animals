@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
     bool isFavorite = false;
     if (_extinctAnimalViewModel.animalModel.value != null) {
       if (_sharedPreferencesViewModel.getAnimal(
-            _extinctAnimalViewModel.animalModel.value!.id.toString(),
+            _extinctAnimalViewModel.animalModel.value!.binomialName,
           ) !=
           null) {
         isFavorite = true;
@@ -131,7 +131,7 @@ class _HomeViewState extends State<HomeView> {
                   Expanded(child: Container()),
                   TextButton(
                     onPressed:
-                        _isGallery
+                        _isGallery || _disableViewModel.screens.value['Home']
                             ? null
                             : () async {
                               setState(() {
@@ -293,7 +293,10 @@ class _HomeViewState extends State<HomeView> {
                               Expanded(child: Container()),
                               IconButton(
                                 onPressed:
-                                    _isSaving
+                                    _isSaving ||
+                                            _disableViewModel
+                                                .screens
+                                                .value['Home']
                                         ? null
                                         : () async {
                                           setState(() {
@@ -308,15 +311,15 @@ class _HomeViewState extends State<HomeView> {
                                                       .value!,
                                                 );
                                           } else {
-                                            _sharedPreferencesViewModel
+                                            await _sharedPreferencesViewModel
                                                 .removeAnimal(
                                                   _extinctAnimalViewModel
                                                       .animalModel
                                                       .value!
-                                                      .id
-                                                      .toString(),
+                                                      .binomialName,
                                                 );
                                           }
+                                          _checkIsFavorite();
                                           setState(() {
                                             _isSaving = false;
                                           });
@@ -396,7 +399,7 @@ class _HomeViewState extends State<HomeView> {
                                     _changeLanguageViewModel
                                         .modifyLanguageLabels();
                                     setState(() {
-                                      _isFavorite = false;
+                                      _checkIsFavorite();
                                     });
                                   },
                           style: ElevatedButton.styleFrom(
