@@ -196,7 +196,7 @@ class _HomeViewState extends State<HomeView> {
             Expanded(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
